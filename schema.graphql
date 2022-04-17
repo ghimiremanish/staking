@@ -1,0 +1,14 @@
+type Account @entity {
+  id: ID!
+  account: String
+  accountType: String
+  amount: BigInt
+  blockNumber: BigInt
+}
+
+type Reward @entity {
+  id: ID!
+  account: String
+  accountType: String
+  amount: BigInt
+}
