@@ -1,8 +1,12 @@
 import {SubstrateBlock} from "@subql/types";
 import {Account, Reward} from "../types";
 
-function uniqueID(){
-    let id = (new Date().getTime()).toString(36)
+function getId(account_id, day=0){
+    let date = new Date()
+    let id = account_id + '_' + date.getFullYear() + '_' + date.getMonth()
+    
+    day?id = id + '_' + date.getDay():null
+    
     return id
 }
 
@@ -22,10 +26,10 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
                     logger.info("====> event record => "+eventRecord.event.toJSON())
                     const [account, amount] = eventRecord.event.data.toJSON() as [string, bigint];
 
-                    let record = await Account.get(account);
+                    let record = await Account.get(getId(account));
                     if (!record) {
                         record = Account.create({
-                            id: account,
+                            id: getId(account),
                             account: account
                         });
                     }
@@ -43,7 +47,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 
                     //save indivisual staking
                     let stake = Reward.create({
-                        id: uniqueID(),
+                        id: getId(account,1),
                         account: account,
                         accountType: 'validator',
                         amount: amount
